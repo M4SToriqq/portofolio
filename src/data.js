@@ -1,21 +1,21 @@
-import Tools1 from "/assets/tools/vscode.png";
-import Tools2 from "/assets/tools/reactjs.png";
-import Tools3 from "/assets/tools/nextjs.png";
-import Tools4 from "/assets/tools/tailwind.png";
-import Tools5 from "/assets/tools/bootstrap.png";
-import Tools6 from "/assets/tools/js.png";
-import Tools7 from "/assets/tools/nodejs.png";
-import Tools8 from "/assets/tools/github.png";
-import Tools9 from "/assets/tools/laravel.png";
-import Tools10 from "/assets/tools/codeigniter.png";
-import Tools11 from "/assets/tools/canva.png";
-import Tools12 from "/assets/tools/html.png";
-import Tools13 from "/assets/tools/css.png";
-import Tools14 from "/assets/tools/ts.png";
-import Tools15 from "/assets/tools/php.png";
-import Tools16 from "/assets/tools/vite.png";
-import Tools17 from "/assets/tools/mysql.png";
-import Tools18 from "/assets/tools/postgresql.png";
+import Tools1 from "/assets/images/VisualStudioCode.png";
+import Tools2 from "/assets/images/ReactJS.png";
+import Tools3 from "/assets/images/NextJS.png";
+import Tools4 from "/assets/images/TailwindCSS.png";
+import Tools5 from "/assets/images/Bootstrap.png";
+import Tools6 from "/assets/images/JavaScript.png";
+import Tools7 from "/assets/images/NodeJS.png";
+import Tools8 from "/assets/images/GitHub.png";
+import Tools9 from "/assets/images/Laravel.png";
+import Tools10 from "/assets/images/CodeIgniter.png";
+import Tools11 from "/assets/images/Canva.png";
+import Tools12 from "/assets/images/HTML.png";
+import Tools13 from "/assets/images/CSS.png";
+import Tools14 from "/assets/images/TypeScript.png";
+import Tools15 from "/assets/images/PHP.png";
+import Tools16 from "/assets/images/Vite.png";
+import Tools17 from "/assets/images/MySQL.png";
+import Tools18 from "/assets/images/PostgreSQL.png";
 
 export const listTools = [
   {
@@ -82,65 +82,65 @@ export const listTools = [
     dad: "800",
   },
   {
-    id: 11,
+    id: 10,
     gambar: Tools10,
     nama: "CodeIgniter",
     ket: "Framework",
     dad: "1000",
   },
   {
-    id: 10,
+    id: 11,
     gambar: Tools11,
     nama: "Canva",
     ket: "Design App",
     dad: "1000",
   },
   {
-    id: 11,
+    id: 12,
     gambar: Tools12,
     nama: "HTML",
     ket: "Language",
     dad: "1400",
   },
   {
-    id: 12,
+    id: 13,
     gambar: Tools13,
     nama: "CSS",
     ket: "Language",
     dad: "1500",
   },
   {
-    id: 13,
+    id: 14,
     gambar: Tools14,
     nama: "TypeScript",
     ket: "Language",
     dad: "1600",
   },
   {
-    id: 14,
+    id: 15,
     gambar: Tools15,
     nama: "PHP",
     ket: "Language",
     dad: "1700",
   },
   {
-    id: 15,
+    id: 16,
     gambar: Tools16,
     nama: "Vite",
     ket: "Framework",
     dad: "1800",
   },
   {
-    id: 16,
+    id: 17,
     gambar: Tools17,
-    nama: "MYSQL",
+    nama: "MySQL",
     ket: "Database",
     dad: "1900",
   },
   {
-    id: 17,
+    id: 18,
     gambar: Tools18,
-    nama: "POSTGRESQL",
+    nama: "PostgreSQL",
     ket: "Database",
     dad: "1900",
   },

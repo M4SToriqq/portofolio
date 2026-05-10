@@ -1,12 +1,12 @@
 .livetype {
     display: inline;
     background: linear-gradient(90deg,
-            #1a1a2e 0%,
-            #1a1a2e 20%,
-            #7c3aed 40%,
-            #6366f1 50%,
-            #1a1a2e 70%,
-            #1a1a2e 100%);
+            #0f1f1c 0%,
+            #0f1f1c 18%,
+            #0d9488 38%,
+            #22d3ee 50%,
+            #0f1f1c 68%,
+            #0f1f1c 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -29,8 +29,8 @@
     display: inline-block;
     margin-left: 2px;
     font-weight: 100;
-    -webkit-text-fill-color: #7c3aed;
-    color: #7c3aed;
+    -webkit-text-fill-color: #0d9488;
+    color: #0d9488;
     user-select: none;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .lt-cursor--blink {
-    animation: ltCursorBlink 0.9s step-end infinite;
+    animation: ltCursorBlink 0.85s step-end infinite;
 }
 
 @keyframes ltCursorBlink {

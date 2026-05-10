@@ -1,103 +1,116 @@
 import React, { useRef, useCallback } from "react";
 import "./DevCard.css";
 
-const DevCardComponent = ({
-  avatarUrl = "",
-  miniAvatarUrl,
-  name = "Toriq Habil F",
-  title = "Full-Stack Developer",
-  handle = "toriqhabil",
-  status = "Online",
-  location = "Malang",
-  contactText = "Contact Me",
-  showUserInfo = true,
-  enableTilt = true,
-  onContactClick,
+const ProfileCardBase = ({
+  photoUrl = "./assets/Toriq.png",
+  thumbUrl,
+  fullName = "Toriq Habil Fadhila",
+  role = "Full-Stack Developer",
+  username = "jstxriqqz66",
+  onlineStatus = "Online",
+  city = "Malang",
+  btnLabel = "Connect",
+  showFooter = true,
+  tiltEnabled = true,
+  onBtnClick,
 }) => {
-  const cardRef = useRef(null);
+  const panelRef = useRef(null);
 
-  const handleMouseMove = useCallback((e) => {
-    const card = cardRef.current;
-    if (!card || !enableTilt) return;
+  const onPointerMove = useCallback((e) => {
+    const el = panelRef.current;
+    if (!el || !tiltEnabled) return;
 
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
+    const box = el.getBoundingClientRect();
+    const px = e.clientX - box.left;
+    const py = e.clientY - box.top;
+    const midX = box.width / 2;
+    const midY = box.height / 2;
 
-    const percentX = (x / rect.width) * 100;
-    const percentY = (y / rect.height) * 100;
-    const rotX = ((y - cy) / cy) * -8;
-    const rotY = ((x - cx) / cx) * 8;
-    const fromCenter = Math.min(
-      Math.hypot(percentY - 50, percentX - 50) / 50, 1
+    const pctX = (px / box.width) * 100;
+    const pctY = (py / box.height) * 100;
+
+    // Slightly more dramatic tilt — ±10 deg vs original ±8
+    const tiltX = ((py - midY) / midY) * -10;
+    const tiltY = ((px - midX) / midX) * 10;
+
+    const radialDist = Math.min(
+      Math.hypot(pctX - 50, pctY - 50) / 50, 1
     );
 
-    card.style.transform =
-      `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(8px)`;
-    card.style.setProperty("--pointer-x", `${x}px`);
-    card.style.setProperty("--pointer-y", `${y}px`);
-    card.style.setProperty("--background-x", `${35 + percentX * 0.3}%`);
-    card.style.setProperty("--background-y", `${35 + percentY * 0.3}%`);
-    card.style.setProperty("--pointer-from-center", `${fromCenter}`);
-    card.style.setProperty("--pointer-from-top", `${percentY / 100}`);
-    card.style.setProperty("--pointer-from-left", `${percentX / 100}`);
-    card.style.setProperty("--card-opacity", "1");
-  }, [enableTilt]);
+    el.style.transform =
+      `perspective(860px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(10px)`;
 
-  const handleMouseLeave = useCallback(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.transform =
-      "perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0px)";
-    card.style.transition = "transform 0.6s cubic-bezier(0.22,1,0.36,1)";
-    card.style.setProperty("--card-opacity", "0");
-    setTimeout(() => {
-      if (card) card.style.transition = "";
-    }, 600);
+    el.style.setProperty("--pointer-x", `${px}px`);
+    el.style.setProperty("--pointer-y", `${py}px`);
+    el.style.setProperty("--background-x", `${30 + pctX * 0.4}%`);
+    el.style.setProperty("--background-y", `${30 + pctY * 0.4}%`);
+    el.style.setProperty("--pointer-from-center", `${radialDist}`);
+    el.style.setProperty("--pointer-from-top", `${pctY / 100}`);
+    el.style.setProperty("--pointer-from-left", `${pctX / 100}`);
+    el.style.setProperty("--card-opacity", "1");
+  }, [tiltEnabled]);
+
+  const onPointerLeave = useCallback(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    el.style.transform = "perspective(860px) rotateX(0deg) rotateY(0deg) translateZ(0px)";
+    el.style.transition = "transform 0.65s cubic-bezier(0.22,1,0.36,1)";
+    el.style.setProperty("--card-opacity", "0");
+    setTimeout(() => { if (el) el.style.transition = ""; }, 650);
   }, []);
 
-  const handleMouseEnter = useCallback(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.transition = "none";
+  const onPointerEnter = useCallback(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    el.style.transition = "none";
   }, []);
 
   return (
-    <div className="dc-card-wrapper">
-      <div ref={cardRef} className="dc-card" onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onMouseEnter={handleMouseEnter}>
-        <div className="dc-inside" />
-        <div className="dc-shine" />
-        <div className="dc-glare" />
+    <div className="pc-wrap">
+      <div
+        ref={panelRef}
+        className="pc-panel"
+        onMouseMove={onPointerMove}
+        onMouseLeave={onPointerLeave}
+        onMouseEnter={onPointerEnter}
+      >
+        <div className="pc-inner" />
+        <div className="pc-foil" />
+        <div className="pc-glint" />
 
-        <div className="dc-header">
-          <h3>{name}</h3>
-          <p>{title}</p>
+        <div className="pc-headline">
+          <h3>{fullName}</h3>
+          <p>{role}</p>
         </div>
 
-        <div className="dc-status-badge">
-          <span className="dc-status-dot" />
-          <span className="dc-status-text">{status}</span>
+        <div className="pc-badge">
+          <span className="pc-beacon" />
+          <span className="pc-badge-text">{onlineStatus}</span>
         </div>
 
-        <div className="dc-avatar-wrap">
-          <img className="avatar" src={avatarUrl} alt={name} loading="lazy" onError={(e) => { e.target.style.display = "none"; }}/>
+        <div className="pc-photo-wrap">
+          <img
+            className="photo"
+            src={photoUrl}
+            alt={fullName}
+            loading="lazy"
+            onError={(e) => { e.target.style.display = "none"; }}
+          />
         </div>
 
-        {showUserInfo && (
-          <div className="dc-user-info">
-            <div className="dc-user-details">
-              <div className="dc-mini-avatar">
-                <img src={miniAvatarUrl || avatarUrl} alt={name} loading="lazy" />
+        {showFooter && (
+          <div className="pc-footer">
+            <div className="pc-identity">
+              <div className="pc-thumb">
+                <img src={thumbUrl || photoUrl} alt={fullName} loading="lazy" />
               </div>
-              <div className="dc-user-text">
-                <div className="dc-handle">@{handle}</div>
-                <div className="dc-status">{location}</div>
+              <div className="pc-meta">
+                <div className="pc-username">@{username}</div>
+                <div className="pc-city">{city}</div>
               </div>
             </div>
-            <button className="dc-contact-btn" onClick={onContactClick} type="button">
-              {contactText}
+            <button className="pc-btn" onClick={onBtnClick} type="button">
+              {btnLabel}
             </button>
           </div>
         )}
@@ -106,5 +119,5 @@ const DevCardComponent = ({
   );
 };
 
-const DevCard = React.memo(DevCardComponent);
-export default DevCard;
+const ProfileCard = React.memo(ProfileCardBase);
+export default ProfileCard;

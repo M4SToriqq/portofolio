@@ -1,10 +1,22 @@
-.dc-card-wrapper {
+/* ── Root palette ── */
+:root {
+  --prism-1: hsl(170, 100%, 70%);
+  --prism-2: hsl(195, 100%, 68%);
+  --prism-3: hsl(220, 100%, 72%);
+  --prism-4: hsl(255, 100%, 74%);
+  --prism-5: hsl(290, 100%, 71%);
+  --prism-6: hsl(330, 100%, 72%);
+}
+
+/* ── Wrapper ── */
+.pc-wrap {
   width: 100%;
   max-width: 380px;
   position: relative;
 }
 
-.dc-card {
+/* ── Main panel ── */
+.pc-panel {
   width: 100%;
   aspect-ratio: 0.718;
   max-height: 520px;
@@ -17,42 +29,37 @@
 
   background-image:
     radial-gradient(farthest-side circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-      hsla(266,100%,90%,var(--card-opacity,0)) 4%,
-      hsla(266,50%,80%,calc(var(--card-opacity,0)*0.75)) 10%,
-      hsla(266,25%,70%,calc(var(--card-opacity,0)*0.5)) 50%,
-      hsla(266,0%,60%,0) 100%),
-    radial-gradient(35% 52% at 55% 20%, #00ffaac4 0%, #073aff00 100%),
-    radial-gradient(100% 100% at 50% 50%, #00c1ffff 1%, #073aff00 76%),
-    conic-gradient(from 124deg at 50% 50%, #c137ffff 0%, #07c6ffff 40%, #07c6ffff 60%, #c137ffff 100%);
+      hsla(180, 100%, 88%, var(--card-opacity, 0)) 4%,
+      hsla(180, 55%, 75%, calc(var(--card-opacity, 0) * 0.75)) 10%,
+      hsla(180, 28%, 65%, calc(var(--card-opacity, 0) * 0.5)) 50%,
+      hsla(180, 0%, 60%, 0) 100%),
+    radial-gradient(38% 55% at 52% 18%, #00ffccc4 0%, #073aff00 100%),
+    radial-gradient(100% 100% at 50% 50%, #00e5ffff 1%, #073aff00 76%),
+    conic-gradient(from 148deg at 50% 50%, #00d4ffff 0%, #07ffc6ff 40%, #07ffc6ff 60%, #00d4ffff 100%);
+
   background-size: 100% 100%;
   background-position: 0 0, 0 0, 50% 50%, 0 0;
   background-blend-mode: color-dodge, normal, normal, normal;
-  animation: dcGlowBg 12s linear infinite;
+  animation: pcGlowSpin 14s linear infinite;
+
   box-shadow:
-    rgba(0,0,0,0.8) calc((var(--pointer-from-left,0.5) * 10px) - 3px)
-    calc((var(--pointer-from-top,0.5) * 20px) - 6px) 20px -5px;
-  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    rgba(0, 0, 0, 0.8) calc((var(--pointer-from-left, 0.5) * 10px) - 3px) calc((var(--pointer-from-top, 0.5) * 20px) - 6px) 20px -5px;
+
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-:root {
-  --sunpillar-1: hsl(2,100%,73%);
-  --sunpillar-2: hsl(53,100%,69%);
-  --sunpillar-3: hsl(93,100%,69%);
-  --sunpillar-4: hsl(176,100%,76%);
-  --sunpillar-5: hsl(228,100%,74%);
-  --sunpillar-6: hsl(283,100%,73%);
-}
-
-.dc-inside {
+/* ── Inner fill ── */
+.pc-inner {
   position: absolute;
   inset: 1px;
   border-radius: 27px;
-  background: linear-gradient(145deg, #ede9fe88 0%, #c7d2fe44 100%);
-  background-color: rgba(255,255,255,0.15);
+  background: linear-gradient(145deg, #ccfbf188 0%, #a5f3fc44 100%);
+  background-color: rgba(255, 255, 255, 0.14);
   z-index: 0;
 }
 
-.dc-shine {
+/* ── Foil (holographic stripes) ── */
+.pc-foil {
   position: absolute;
   inset: 0;
   border-radius: 28px;
@@ -60,39 +67,45 @@
   mix-blend-mode: color-dodge;
   pointer-events: none;
   filter: brightness(0.66) contrast(1.33) saturate(0.33) opacity(0.5);
-  animation: dcHoloBg 18s linear infinite;
-  --space: 5%;
+  animation: pcFoilShift 20s linear infinite;
+  --sp: 5%;
+
   background-image:
     repeating-linear-gradient(0deg,
-      var(--sunpillar-1) calc(var(--space)*1),
-      var(--sunpillar-2) calc(var(--space)*2),
-      var(--sunpillar-3) calc(var(--space)*3),
-      var(--sunpillar-4) calc(var(--space)*4),
-      var(--sunpillar-5) calc(var(--space)*5),
-      var(--sunpillar-6) calc(var(--space)*6),
-      var(--sunpillar-1) calc(var(--space)*7)),
+      var(--prism-1) calc(var(--sp) * 1),
+      var(--prism-2) calc(var(--sp) * 2),
+      var(--prism-3) calc(var(--sp) * 3),
+      var(--prism-4) calc(var(--sp) * 4),
+      var(--prism-5) calc(var(--sp) * 5),
+      var(--prism-6) calc(var(--sp) * 6),
+      var(--prism-1) calc(var(--sp) * 7)),
     repeating-linear-gradient(-45deg,
-      #0e152e 0%,
-      hsl(180,10%,60%) 3.8%,
-      hsl(180,29%,66%) 4.5%,
-      hsl(180,10%,60%) 5.2%,
-      #0e152e 10%,
-      #0e152e 12%),
-    radial-gradient(farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
-      hsla(0,0%,0%,0.1) 12%,
-      hsla(0,0%,0%,0.15) 20%,
-      hsla(0,0%,0%,0.25) 120%);
-  background-position: 0 var(--background-y,50%), var(--background-x,50%) var(--background-y,50%), center;
+      #051a1a 0%,
+      hsl(185, 12%, 58%) 3.8%,
+      hsl(185, 32%, 64%) 4.5%,
+      hsl(185, 12%, 58%) 5.2%,
+      #051a1a 10%,
+      #051a1a 12%),
+    radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsla(0, 0%, 0%, 0.1) 12%,
+      hsla(0, 0%, 0%, 0.15) 20%,
+      hsla(0, 0%, 0%, 0.25) 120%);
+
+  background-position:
+    0 var(--background-y, 50%),
+    var(--background-x, 50%) var(--background-y, 50%),
+    center;
   background-blend-mode: color, hard-light;
   background-size: 500% 500%, 300% 300%, 200% 200%;
 }
 
-.dc-card:hover .dc-shine {
-  filter: brightness(0.85) contrast(1.5) saturate(0.5);
+.pc-panel:hover .pc-foil {
+  filter: brightness(0.88) contrast(1.5) saturate(0.55);
   animation: none;
 }
 
-.dc-glare {
+/* ── Glint overlay ── */
+.pc-glint {
   position: absolute;
   inset: 0;
   border-radius: 28px;
@@ -100,51 +113,47 @@
   pointer-events: none;
   mix-blend-mode: overlay;
   filter: brightness(0.8) contrast(1.2);
-  background-image: radial-gradient(
-    farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
-    hsl(248,25%,80%) 12%,
-    hsla(207,40%,30%,0.8) 90%
-  );
+  background-image: radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsl(185, 30%, 80%) 12%,
+      hsla(195, 45%, 28%, 0.8) 90%);
 }
 
-.dc-avatar-wrap {
+/* ── Avatar ── */
+.pc-photo-wrap {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   height: 100%;
   z-index: 3;
   overflow: hidden;
 }
 
-.dc-avatar-wrap img.avatar {
+.pc-photo-wrap img.photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top center;
   display: block;
   opacity: calc(1.75 - var(--pointer-from-center, 0));
-  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.dc-card:hover .dc-avatar-wrap img.avatar {
+.pc-panel:hover .pc-photo-wrap img.photo {
   transform: scale(1.03);
 }
 
-.dc-avatar-wrap::after {
+.pc-photo-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent 30%,
-    rgba(0,0,0,0.4) 65%,
-    rgba(0,0,0,0.92) 100%
-  );
+  background: linear-gradient(to bottom,
+      transparent 30%,
+      rgba(0, 0, 0, 0.38) 65%,
+      rgba(0, 0, 0, 0.90) 100%);
   pointer-events: none;
 }
 
-.dc-header {
+/* ── Headline ── */
+.pc-headline {
   position: absolute;
   top: 0;
   left: 0;
@@ -156,31 +165,32 @@
   gap: 4px;
 }
 
-.dc-header h3 {
+.pc-headline h3 {
   font-size: clamp(18px, 4vw, 26px);
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  background-image: linear-gradient(to bottom, #fff, #c4b5fd);
+  background-image: linear-gradient(to bottom, #9ca3af, #6b7280);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.dc-header p {
+.pc-headline p {
   font-size: 12px;
   font-weight: 600;
   margin: 0;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background-image: linear-gradient(to bottom, #e9d5ff, #a78bfa);
+  background-image: linear-gradient(to bottom, #9ca3af, #6b7280);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.dc-status-badge {
+/* ── Status badge ── */
+.pc-badge {
   position: absolute;
   top: 18px;
   right: 18px;
@@ -190,32 +200,42 @@
   gap: 5px;
   padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
 }
 
-.dc-status-dot {
+.pc-beacon {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #10b981;
-  animation: dcStatusPulse 2s ease-in-out infinite;
+  background: #2dd4bf;
+  animation: pcBeaconPulse 2.2s ease-in-out infinite;
 }
 
-.dc-status-text {
+.pc-badge-text {
   font-size: 10px;
   font-weight: 500;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   letter-spacing: 0.05em;
 }
 
-@keyframes dcStatusPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+@keyframes pcBeaconPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
 }
 
-.dc-user-info {
+/* ── Footer row ── */
+.pc-footer {
   position: absolute;
   bottom: 18px;
   left: 14px;
@@ -227,13 +247,13 @@
   gap: 12px;
   padding: 12px 14px;
   border-radius: 16px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(30px);
   pointer-events: auto;
 }
 
-.dc-user-details {
+.pc-identity {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -241,89 +261,140 @@
   min-width: 0;
 }
 
-.dc-mini-avatar {
+.pc-thumb {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.dc-mini-avatar img {
+.pc-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.dc-user-text {
+.pc-meta {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.dc-handle {
+.pc-username {
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.dc-status {
+.pc-city {
   font-size: 10px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.dc-contact-btn {
+.pc-btn {
   flex-shrink: 0;
   padding: 8px 16px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
   pointer-events: auto;
 }
 
-.dc-contact-btn:hover {
-  border-color: rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.08);
+.pc-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateY(-1px);
 }
 
-.dc-content { display: none; }
+/* ── Keyframes ── */
+@keyframes pcGlowSpin {
+  0% {
+    --bgrotate: 0deg;
+  }
 
-@keyframes dcGlowBg {
-  0%   { --bgrotate: 0deg; }
-  100% { --bgrotate: 360deg; }
+  100% {
+    --bgrotate: 360deg;
+  }
 }
 
-@keyframes dcHoloBg {
-  0%   { background-position: 0 var(--background-y,50%), 0 0, center; }
-  100% { background-position: 0 var(--background-y,50%), 90% 90%, center; }
+@keyframes pcFoilShift {
+  0% {
+    background-position: 0 var(--background-y, 50%), 0 0, center;
+  }
+
+  100% {
+    background-position: 0 var(--background-y, 50%), 90% 90%, center;
+  }
 }
 
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  .dc-card-wrapper { max-width: 320px; margin: 0 auto; }
-  .dc-card { max-height: 440px; }
-  .dc-header h3 { font-size: 20px; }
-  .dc-user-info { bottom: 14px; left: 12px; right: 12px; padding: 10px 12px; }
-  .dc-contact-btn { padding: 6px 12px; font-size: 12px; }
-  .dc-mini-avatar { width: 30px; height: 30px; }
+  .pc-wrap {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .pc-panel {
+    max-height: 440px;
+  }
+
+  .pc-headline h3 {
+    font-size: 20px;
+  }
+
+  .pc-footer {
+    bottom: 14px;
+    left: 12px;
+    right: 12px;
+    padding: 10px 12px;
+  }
+
+  .pc-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .pc-thumb {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 @media (max-width: 480px) {
-  .dc-card-wrapper { max-width: 280px; }
-  .dc-card { max-height: 380px; }
-  .dc-header h3 { font-size: 18px; }
-  .dc-handle { font-size: 12px; }
-  .dc-status-text { font-size: 9px; }
-  .dc-contact-btn { padding: 5px 10px; font-size: 11px; }
+  .pc-wrap {
+    max-width: 280px;
+  }
+
+  .pc-panel {
+    max-height: 380px;
+  }
+
+  .pc-headline h3 {
+    font-size: 18px;
+  }
+
+  .pc-username {
+    font-size: 12px;
+  }
+
+  .pc-badge-text {
+    font-size: 9px;
+  }
+
+  .pc-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
 }

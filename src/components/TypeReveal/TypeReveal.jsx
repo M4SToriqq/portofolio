@@ -8,14 +8,14 @@ gsap.registerPlugin(ScrollTrigger, GSAPSplitText);
 const TypeReveal = ({
   text,
   className = "",
-  delay = 80,
-  duration = 0.75,
-  ease = "power4.out",
+  delay = 75,
+  duration = 0.8,
+  ease = "expo.out",
   splitType = "chars",
-  from = { opacity: 0, y: 48, rotateX: -25, transformOrigin: "0% 50% -50px" },
+  from = { opacity: 0, y: 40, rotateX: -20, transformOrigin: "0% 50% -40px" },
   to = { opacity: 1, y: 0, rotateX: 0 },
-  threshold = 0.1,
-  rootMargin = "-80px",
+  threshold = 0.12,
+  rootMargin = "-60px",
   textAlign = "left",
   onLetterAnimationComplete,
 }) => {
@@ -97,7 +97,7 @@ const TypeReveal = ({
   }, [text, delay, duration, ease, splitType, from, to, threshold, rootMargin, onLetterAnimationComplete]);
 
   return (
-    <p ref={ref} className={`tr-parent ${className}`} style={{ textAlign, overflow: "hidden", display: "block", whiteSpace: "normal", wordWrap: "break-word", perspective: "600px", }}>
+    <p ref={ref} className={`tr-parent ${className}`} style={{ textAlign, overflow: "hidden", display: "block", whiteSpace: "normal", wordWrap: "break-word", perspective: "700px", }}>
       {text}
     </p>
   );

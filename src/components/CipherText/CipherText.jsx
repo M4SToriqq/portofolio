@@ -9,138 +9,134 @@ import "./CipherText.css";
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
 const CipherText = ({
-  radius = 120,
-  duration = 1.0,
-  speed = 0.6,
-  scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-  className = "",
-  style = {},
+  reach       = 110,
+  fadeDuration = 0.95,
+  decodeSpeed  = 0.55,
+  glyphSet     = "0123456789@#$%&!?ABCDEFabcdef",
+  className    = "",
+  style        = {},
   children,
 }) => {
-  const rootRef = useRef(null);
-  const charsRef = useRef([]);
-  const activeRef = useRef(new Set());
-  const rafRef = useRef(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
+  const wrapRef    = useRef(null);
+  const glyphsRef  = useRef([]);
+  const hotSet     = useRef(new Set());
+  const loopRef    = useRef(null);
+  const cursorRef  = useRef({ x: -9999, y: -9999 });
 
-  const processChars = useCallback(() => {
-    const { x, y } = mouseRef.current;
+  const scanGlyphs = useCallback(() => {
+    const { x, y } = cursorRef.current;
 
-    charsRef.current.forEach((c) => {
-      const { left, top, width, height } = c.getBoundingClientRect();
-      const cx = left + width / 2;
-      const cy = top + height / 2;
-      const dist = Math.hypot(x - cx, y - cy);
-      const inRange = dist < radius;
-      const wasActive = activeRef.current.has(c);
+    glyphsRef.current.forEach((g) => {
+      const r    = g.getBoundingClientRect();
+      const gx   = r.left + r.width  / 2;
+      const gy   = r.top  + r.height / 2;
+      const dist = Math.hypot(x - gx, y - gy);
+      const near = dist < reach;
+      const was  = hotSet.current.has(g);
 
-      if (inRange && !wasActive) {
-        activeRef.current.add(c);
-        const proximity = 1 - dist / radius;
+      if (near && !was) {
+        hotSet.current.add(g);
+        const t = 1 - dist / reach;           // proximity 0-1
 
-        gsap.to(c, {
+        gsap.to(g, {
           overwrite: "auto",
-          duration: 0.2,
-          scale: 1 + proximity * 0.18,
-          color: `hsl(${270 - proximity * 60}, 80%, ${70 + proximity * 20}%)`,
-          ease: "power2.out",
+          duration:  0.18,
+          scale:     1 + t * 0.15,
+          color:     `hsl(${160 + t * 80}, 75%, ${60 + t * 25}%)`,
+          ease:      "power2.out",
         });
 
-        gsap.to(c, {
+        gsap.to(g, {
           overwrite: "auto",
-          duration: duration * (0.4 + proximity * 0.6),
+          duration:  fadeDuration * (0.35 + t * 0.65),
           scrambleText: {
-            text: c.dataset.content || "",
-            chars: scrambleChars,
-            speed,
-            revealDelay: 0.1,
+            text:        g.dataset.ch || "",
+            chars:       glyphSet,
+            speed:       decodeSpeed,
+            revealDelay: 0.08,
           },
           ease: "none",
         });
       }
 
-      if (!inRange && wasActive) {
-        activeRef.current.delete(c);
-        gsap.to(c, {
+      if (!near && was) {
+        hotSet.current.delete(g);
+        gsap.to(g, {
           overwrite: "auto",
-          duration: 0.4,
-          scale: 1,
-          color: "",
-          ease: "power2.inOut",
+          duration:  0.35,
+          scale:     1,
+          color:     "",
+          ease:      "sine.inOut",
         });
       }
     });
 
-    rafRef.current = requestAnimationFrame(processChars);
-  }, [radius, duration, speed, scrambleChars]);
+    loopRef.current = requestAnimationFrame(scanGlyphs);
+  }, [reach, fadeDuration, decodeSpeed, glyphSet]);
 
   useEffect(() => {
-    const root = rootRef.current;
-    const activeSet = activeRef.current;
-    if (!root) return;
+    const wrap    = wrapRef.current;
+    const liveSet = hotSet.current;
+    if (!wrap) return;
 
-    const pEl = root.querySelector("p");
-    if (!pEl) return;
+    const para = wrap.querySelector("p");
+    if (!para) return;
 
-    const split = SplitText.create(pEl, {
-      type: "chars,words",
-      charsClass: "ct-char",
-      wordsClass: "ct-word",
+    const split = SplitText.create(para, {
+      type:       "chars,words",
+      charsClass: "gt-char",
+      wordsClass: "gt-word",
     });
 
-    charsRef.current = split.chars;
+    glyphsRef.current = split.chars;
 
-    charsRef.current.forEach((c) => {
-      gsap.set(c, {
-        display: "inline-block",
-        transformOrigin: "50% 60%",
-        attr: { "data-content": c.textContent || "" },
+    glyphsRef.current.forEach((g) => {
+      gsap.set(g, {
+        display:         "inline-block",
+        transformOrigin: "50% 55%",
+        attr:            { "data-ch": g.textContent || "" },
       });
     });
 
+    // Intro — stagger from centre outward
     gsap.fromTo(
-      charsRef.current,
-      { opacity: 0, y: 16, filter: "blur(6px)" },
+      glyphsRef.current,
+      { opacity: 0, y: 14, filter: "blur(8px)" },
       {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        duration: 0.6,
-        stagger: { each: 0.018, from: "start" },
-        ease: "power3.out",
-        delay: 0.1,
+        opacity:  1,
+        y:        0,
+        filter:   "blur(0px)",
+        duration: 0.55,
+        stagger:  { each: 0.016, from: "center" },
+        ease:     "expo.out",
+        delay:    0.08,
       }
     );
 
-    const handleMove = (e) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    };
+    const onMove  = (e) => { cursorRef.current = { x: e.clientX, y: e.clientY }; };
+    const onLeave = ()  => { cursorRef.current = { x: -9999, y: -9999 }; };
 
-    const handleLeave = () => {
-      mouseRef.current = { x: -9999, y: -9999 };
-    };
+    wrap.addEventListener("pointermove",  onMove,  { passive: true });
+    wrap.addEventListener("pointerleave", onLeave, { passive: true });
 
-    root.addEventListener("pointermove", handleMove, { passive: true });
-    root.addEventListener("pointerleave", handleLeave, { passive: true });
-
-    rafRef.current = requestAnimationFrame(processChars);
+    loopRef.current = requestAnimationFrame(scanGlyphs);
 
     return () => {
-      root.removeEventListener("pointermove", handleMove);
-      root.removeEventListener("pointerleave", handleLeave);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      wrap.removeEventListener("pointermove",  onMove);
+      wrap.removeEventListener("pointerleave", onLeave);
+      if (loopRef.current) cancelAnimationFrame(loopRef.current);
       split.revert();
-      activeSet.clear();
+      liveSet.clear();
     };
-  }, [processChars]);
+  }, [scanGlyphs]);
 
   return (
-    <div ref={rootRef} className={`ct-block ${className}`} style={style}>
-      <span className="ct-eyebrow" aria-hidden="true">
-        <span className="ct-dot" />
-        interactive
+    <div ref={wrapRef} className={`gt-block ${className}`} style={style}>
+      <span className="gt-label" aria-hidden="true">
+        <span className="gt-pip" />
+        hover to decode
       </span>
-      <p className="ct-text">{children}</p>
+      <p className="gt-text">{children}</p>
     </div>
   );
 };

@@ -1,152 +1,166 @@
 'use client'
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 
-const springEase = (t) =>
-  1 - Math.exp(-5.5 * t) * Math.cos(2 * Math.PI * 1.3 * t * 0.28)
-const lerp = (a, b, t) => a + (b - a) * t
+// Easing: elastic overshoot — different curve from original spring
+const elasticOut = (t) =>
+  t === 0 ? 0 : t === 1 ? 1
+    : Math.pow(2, -9 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1
 
-function animateSpan(el, { dir, y, blur: blurPeak, dur, delay }) {
-  let rafId = null
-  let timerId = null
-  const initX = dir === 'left' ? -y * 2 : dir === 'right' ? y * 2 : 0
-  const initY = dir === 'top' ? -y : dir === 'bottom' ? y : 0
+const mix = (a, b, t) => a * (1 - t) + b * t
 
-  const applyInitial = () => {
-    el.style.opacity = '0'
-    el.style.filter = `blur(${blurPeak}px)`
-    el.style.transform = `translate(${initX}px, ${initY}px) scale(0.93)`
-  }
+function runSegmentAnim(node, { dir, offset, peakBlur, ms, delay }) {
+  let frameId = null
+  let timeoutId = null
 
-  applyInitial()
+  const startX = dir === 'left' ? -offset * 2.2 : dir === 'right' ? offset * 2.2 : 0
+  const startY = dir === 'top'  ? -offset       : dir === 'bottom' ? offset       : 0
 
-  timerId = setTimeout(() => {
-    const totalMs = dur * 1000
-    let startTs = null
+  // Set hidden initial state immediately
+  node.style.opacity   = '0'
+  node.style.filter    = `blur(${peakBlur}px)`
+  node.style.transform = `translate(${startX}px, ${startY}px) scale(0.91)`
 
-    const frame = (now) => {
-      if (!startTs) startTs = now
-      const rawT = Math.min((now - startTs) / totalMs, 1)
-      const tPos = springEase(rawT)
-      const tBlur = rawT < 0.55
-        ? rawT / 0.55
-        : 1
+  timeoutId = setTimeout(() => {
+    let origin = null
 
-      el.style.opacity = Math.min(rawT / 0.35, 1).toFixed(3)
-      el.style.filter = `blur(${Math.max(0, lerp(blurPeak, 0, tBlur)).toFixed(2)}px)`
-      el.style.transform = [
-        `translate(${lerp(initX, 0, tPos).toFixed(2)}px,`,
-        `${lerp(initY, 0, tPos).toFixed(2)}px)`,
-        `scale(${lerp(0.93, 1, tPos).toFixed(4)})`,
+    const tick = (now) => {
+      if (!origin) origin = now
+      const raw   = Math.min((now - origin) / ms, 1)
+      const tMove = elasticOut(raw)
+      // Blur clears faster than movement — visible difference from original
+      const tFade = raw < 0.45 ? raw / 0.45 : 1
+
+      node.style.opacity   = Math.min(raw / 0.30, 1).toFixed(3)
+      node.style.filter    = `blur(${Math.max(0, mix(peakBlur, 0, tFade)).toFixed(2)}px)`
+      node.style.transform = [
+        `translate(${mix(startX, 0, tMove).toFixed(2)}px,`,
+        `${mix(startY, 0, tMove).toFixed(2)}px)`,
+        `scale(${mix(0.91, 1, tMove).toFixed(4)})`,
       ].join(' ')
 
-      if (rawT < 1) rafId = requestAnimationFrame(frame)
+      if (raw < 1) frameId = requestAnimationFrame(tick)
     }
 
-    rafId = requestAnimationFrame(frame)
+    frameId = requestAnimationFrame(tick)
   }, delay)
 
   return () => {
-    clearTimeout(timerId)
-    if (rafId) cancelAnimationFrame(rafId)
+    clearTimeout(timeoutId)
+    if (frameId) cancelAnimationFrame(frameId)
   }
 }
 
 const FadeWords = ({
-  text = '',
-  className = '',
-  style = {},
-  animateBy = 'words',
-  direction = 'bottom',
-  stagger = 80,
-  duration = 0.55,
-  blurAmount = 14,
-  offset = 28,
-  threshold = 0.15,
+  text       = '',
+  className  = '',
+  style      = {},
+  splitBy    = 'words',      // 'words' | 'chars'
+  direction  = 'bottom',
+  staggerMs  = 75,
+  duration   = 0.6,
+  blur       = 12,
+  shift      = 24,
+  threshold  = 0.15,
   rootMargin = '0px',
-
-  onComplete,
+  onDone,
 }) => {
-  const segments = useMemo(
-    () => (animateBy === 'words' ? text.split(' ') : text.split('')),
-    [text, animateBy]
+  const tokens = useMemo(
+    () => (splitBy === 'words' ? text.split(' ') : text.split('')),
+    [text, splitBy]
   )
 
-  const [inView, setInView] = useState(false)
-  const containerRef = useRef(null)
-  const spanRefs = useRef([])
-  const cleanupRef = useRef([])
+  const [triggered, setTriggered] = useState(false)
+  const rootRef    = useRef(null)
+  const nodeRefs   = useRef([])
+  const teardowns  = useRef([])
 
-  const handleIntersect = useCallback(([entry], observer) => {
+  const onVisible = useCallback(([entry], obs) => {
     if (entry.isIntersecting) {
-      setInView(true)
-      observer.disconnect()
+      setTriggered(true)
+      obs.disconnect()
     }
   }, [])
 
   useEffect(() => {
-    if (!containerRef.current) return
-    const obs = new IntersectionObserver(handleIntersect, { threshold, rootMargin })
-    obs.observe(containerRef.current)
-    return () => obs.disconnect()
-  }, [threshold, rootMargin, handleIntersect])
+    if (!rootRef.current) return
+    const io = new IntersectionObserver(onVisible, { threshold, rootMargin })
+    io.observe(rootRef.current)
+    return () => io.disconnect()
+  }, [threshold, rootMargin, onVisible])
 
   useEffect(() => {
-    if (!inView) return
+    if (!triggered) return
 
-    cleanupRef.current.forEach((fn) => fn())
-    cleanupRef.current = []
+    teardowns.current.forEach((fn) => fn())
+    teardowns.current = []
 
-    spanRefs.current.forEach((el, i) => {
-      if (!el) return
+    nodeRefs.current.forEach((node, idx) => {
+      if (!node) return
 
-      const delay = i * stagger
-      const isLast = i === spanRefs.current.length - 1
+      const delayMs = idx * staggerMs
+      const isLast  = idx === nodeRefs.current.length - 1
 
-      const cancel = animateSpan(el, {
-        dir: direction,
-        y: offset,
-        blur: blurAmount,
-        dur: duration,
-        delay,
+      const stop = runSegmentAnim(node, {
+        dir:      direction,
+        offset:   shift,
+        peakBlur: blur,
+        ms:       duration * 1000,
+        delay:    delayMs,
       })
 
-      cleanupRef.current.push(cancel)
+      teardowns.current.push(stop)
 
-      if (isLast && onComplete) {
-        const totalMs = delay + duration * 1000
-        const tid = setTimeout(onComplete, totalMs)
-        cleanupRef.current.push(() => clearTimeout(tid))
+      if (isLast && onDone) {
+        const tid = setTimeout(onDone, delayMs + duration * 1000)
+        teardowns.current.push(() => clearTimeout(tid))
       }
     })
 
-    return () => {
-      cleanupRef.current.forEach((fn) => fn())
-    }
-  }, [inView, direction, stagger, duration, blurAmount, offset, onComplete])
+    return () => { teardowns.current.forEach((fn) => fn()) }
+  }, [triggered, direction, staggerMs, duration, blur, shift, onDone])
 
+  // Reset nodes when key props change
   useEffect(() => {
-    spanRefs.current.forEach((el) => {
-      if (!el) return
-      el.style.opacity = '0'
-      el.style.filter = `blur(${blurAmount}px)`
-      el.style.transform = ''
+    nodeRefs.current.forEach((node) => {
+      if (!node) return
+      node.style.opacity   = '0'
+      node.style.filter    = `blur(${blur}px)`
+      node.style.transform = ''
     })
-  }, [direction, blurAmount])
+  }, [direction, blur])
 
   return (
-    <p ref={containerRef} className={className} style={{ display: 'inline', lineHeight: 'inherit', flexWrap: 'wrap', alignItems: 'baseline', ...style,}}>
-      {segments.map((seg, i) => {
-        const isSpace = animateBy === 'chars' && seg === ' '
-        const displaySeg =
-          animateBy === 'words'
-            ? seg + (i < segments.length - 1 ? '\u00A0' : '')
+    <p
+      ref={rootRef}
+      className={className}
+      style={{
+        display:    'inline',
+        lineHeight: 'inherit',
+        flexWrap:   'wrap',
+        alignItems: 'baseline',
+        ...style,
+      }}
+    >
+      {tokens.map((tok, i) => {
+        const isSpace   = splitBy === 'chars' && tok === ' '
+        const displayed =
+          splitBy === 'words'
+            ? tok + (i < tokens.length - 1 ? '\u00A0' : '')
             : isSpace
             ? '\u00A0'
-            : seg
+            : tok
 
         return (
-          <span key={`${seg}-${i}`} ref={(el) => (spanRefs.current[i] = el)} style={{ display: 'inline-block', whiteSpace: 'pre', willChange: 'transform, filter, opacity' }}>
-            {displaySeg}
+          <span
+            key={`${tok}-${i}`}
+            ref={(el) => (nodeRefs.current[i] = el)}
+            style={{
+              display:    'inline-block',
+              whiteSpace: 'pre',
+              willChange: 'transform, filter, opacity',
+            }}
+          >
+            {displayed}
           </span>
         )
       })}
@@ -154,4 +168,4 @@ const FadeWords = ({
   )
 }
 
-export default FadeWords;
+export default FadeWords

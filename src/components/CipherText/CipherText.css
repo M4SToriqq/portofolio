@@ -1,10 +1,10 @@
-.ct-block {
+.gt-block {
   position: relative;
   max-width: 780px;
   padding: 0;
 }
 
-.ct-eyebrow {
+.gt-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -12,43 +12,43 @@
   font-family: monospace;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(139, 92, 246, 0.5);
+  color: rgba(52, 211, 153, 0.5);
   margin-bottom: 14px;
   pointer-events: none;
   user-select: none;
 }
 
-.ct-dot {
+.gt-pip {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: rgba(139, 92, 246, 0.6);
-  animation: ctDotPulse 2.4s ease-in-out infinite;
+  background: rgba(52, 211, 153, 0.65);
+  animation: gtPipBlink 2.8s ease-in-out infinite;
 }
 
-@keyframes ctDotPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.3; transform: scale(0.7); }
+@keyframes gtPipBlink {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%       { opacity: 0.2; transform: scale(0.65); }
 }
 
-.ct-text {
+.gt-text {
   font-family: monospace;
   font-size: clamp(15px, 3.5vw, 28px);
   line-height: 1.65;
-  color: #d4d4d8;
+  color: #cbd5e1;
   margin: 0;
   letter-spacing: 0.01em;
 }
 
-.ct-char {
+.gt-char {
   display: inline-block;
   will-change: transform, opacity, filter, color;
-  transform-origin: 50% 60%;
+  transform-origin: 50% 55%;
   transition: color 0.3s ease;
   cursor: default;
 }
 
-.ct-word {
+.gt-word {
   display: inline-block;
   margin-right: 0.28em;
 }

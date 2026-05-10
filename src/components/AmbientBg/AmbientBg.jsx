@@ -1,7 +1,8 @@
 import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
 import { useEffect, useRef } from "react";
-import './AmbientBg.css';
+import "./AmbientBg.css";
 
+// Vertex shader — simple full-screen triangle pass-through
 const VERT = `#version 300 es
 in vec2 position;
 void main() {
@@ -9,141 +10,102 @@ void main() {
 }
 `;
 
+// Fragment shader — plasma wave with custom gradient ramp
 const FRAG = `#version 300 es
 precision highp float;
 
 uniform float uTime;
-uniform float uAmplitude;
-uniform vec3 uColorStops[3];
-uniform vec2 uResolution;
-uniform float uBlend;
+uniform float uWaveScale;
+uniform vec3 uPalette[3];
+uniform vec2 uViewport;
+uniform float uSoftness;
 
 out vec4 fragColor;
 
-vec3 permute(vec3 x) {
-  return mod(((x * 34.0) + 1.0) * x, 289.0);
+// Hash-based gradient noise (replaces simplex)
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
 }
 
-float snoise(vec2 v) {
-  const vec4 C = vec4(
-    0.211324865405187, 0.366025403784439,
-    -0.577350269189626, 0.024390243902439
-  );
-  vec2 i  = floor(v + dot(v, C.yy));
-  vec2 x0 = v - i + dot(i, C.xx);
-  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-  vec4 x12 = x0.xyxy + C.xxzz;
-  x12.xy -= i1;
-  i = mod(i, 289.0);
-  vec3 p = permute(
-    permute(i.y + vec3(0.0, i1.y, 1.0))
-    + i.x + vec3(0.0, i1.x, 1.0)
-  );
-  vec3 m = max(
-    0.5 - vec3(
-      dot(x0, x0),
-      dot(x12.xy, x12.xy),
-      dot(x12.zw, x12.zw)
-    ), 0.0
-  );
-  m = m * m;
-  m = m * m;
-  vec3 x = 2.0 * fract(p * C.www) - 1.0;
-  vec3 h = abs(x) - 0.5;
-  vec3 ox = floor(x + 0.5);
-  vec3 a0 = x - ox;
-  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
-  vec3 g;
-  g.x  = a0.x  * x0.x  + h.x  * x0.y;
-  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-  return 130.0 * dot(m, g);
+float gradientNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0); // quintic
+
+  float a = dot(hash2(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0));
+  float b = dot(hash2(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0));
+  float c = dot(hash2(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0));
+  float d = dot(hash2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0));
+
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 
-struct ColorStop {
-  vec3 color;
-  float position;
-};
-
-#define COLOR_RAMP(colors, factor, finalColor) {                        \
-  int index = 0;                                                        \
-  for (int i = 0; i < 2; i++) {                                         \
-    ColorStop currentColor = colors[i];                                 \
-    bool isInBetween = currentColor.position <= factor;                 \
-    index = int(mix(float(index), float(i), float(isInBetween)));       \
-  }                                                                     \
-  ColorStop currentColor = colors[index];                               \
-  ColorStop nextColor    = colors[index + 1];                           \
-  float range      = nextColor.position - currentColor.position;        \
-  float lerpFactor = (factor - currentColor.position) / range;          \
-  finalColor = mix(currentColor.color, nextColor.color, lerpFactor);    \
+// Three-stop linear gradient along X axis
+vec3 paletteRamp(float t) {
+  t = clamp(t, 0.0, 1.0);
+  if (t < 0.5) {
+    return mix(uPalette[0], uPalette[1], t * 2.0);
+  } else {
+    return mix(uPalette[1], uPalette[2], (t - 0.5) * 2.0);
+  }
 }
 
 void main() {
-  vec2 uv = gl_FragCoord.xy / uResolution;
+  vec2 uv = gl_FragCoord.xy / uViewport;
 
-  ColorStop colors[3];
-  colors[0] = ColorStop(uColorStops[0], 0.0);
-  colors[1] = ColorStop(uColorStops[1], 0.5);
-  colors[2] = ColorStop(uColorStops[2], 1.0);
+  // Plasma layers — different freq/phase per layer
+  float wave0 = gradientNoise(vec2(uv.x * 2.2 + uTime * 0.05, uTime * 0.14)) * 0.55 * uWaveScale;
+  float wave1 = gradientNoise(vec2(uv.x * 4.1 - uTime * 0.09, uTime * 0.28)) * 0.28 * uWaveScale;
+  float wave2 = gradientNoise(vec2(uv.x * 8.3 + uTime * 0.19, uTime * 0.47)) * 0.11 * uWaveScale;
 
-  vec3 rampColor;
-  COLOR_RAMP(colors, uv.x, rampColor);
+  // Fold waves through an exponential to get a soft ridge
+  float ridge = exp(wave0 + wave1 + wave2);
+  float horizon = uv.y * 2.0 - ridge + 0.18;
+  float lum = 0.60 * horizon;
 
-  /* Layer 1 — slow wide wave */
-  float n1 = snoise(vec2(uv.x * 1.8 + uTime * 0.06, uTime * 0.18)) * 0.5 * uAmplitude;
-
-  /* Layer 2 — faster narrow detail */
-  float n2 = snoise(vec2(uv.x * 3.5 - uTime * 0.10, uTime * 0.32)) * 0.25 * uAmplitude;
-
-  /* Layer 3 — subtle high-frequency shimmer */
-  float n3 = snoise(vec2(uv.x * 7.0 + uTime * 0.22, uTime * 0.55)) * 0.10 * uAmplitude;
-
-  float height = exp(n1 + n2 + n3);
-  height = uv.y * 2.0 - height + 0.2;
-  float intensity = 0.65 * height;
-
-  float midPoint   = 0.22;
-  float auroraAlpha = smoothstep(
-    midPoint - uBlend * 0.55,
-    midPoint + uBlend * 0.55,
-    intensity
+  // Smooth edge falloff controlled by uSoftness
+  float cutoff = 0.20;
+  float alpha = smoothstep(
+    cutoff - uSoftness * 0.50,
+    cutoff + uSoftness * 0.50,
+    lum
   );
 
-  /* Subtle color variation across Y for depth */
-  vec3 depthTint = mix(
-    uColorStops[0] * 0.4,
-    uColorStops[2] * 0.2,
-    uv.y
+  // Horizontal color ramp
+  vec3 col = paletteRamp(uv.x);
+
+  // Y-depth tint — cool shadows at bottom, warm glow at top
+  vec3 shadowTint = uPalette[0] * 0.35;
+  vec3 highlightTint = uPalette[2] * 0.18;
+  col += mix(shadowTint, highlightTint, uv.y) * alpha * 0.25;
+
+  // Radial vignette centred slightly above middle
+  float vig = 1.0 - smoothstep(0.25, 1.05,
+    length((uv - vec2(0.5, 0.28)) * vec2(1.15, 1.75))
   );
+  col   *= 0.82 + 0.18 * vig;
+  alpha *= 0.88 + 0.12 * vig;
 
-  vec3 auroraColor = intensity * rampColor + depthTint * auroraAlpha * 0.3;
-
-  /* Vignette — darken edges */
-  float vignette = 1.0 - smoothstep(0.3, 1.0,
-    length((uv - vec2(0.5, 0.3)) * vec2(1.2, 1.8))
-  );
-
-  auroraColor *= 0.85 + 0.15 * vignette;
-  auroraAlpha  *= 0.9 + 0.1  * vignette;
-
-  fragColor = vec4(auroraColor * auroraAlpha, auroraAlpha);
+  // Pre-multiply alpha before output
+  fragColor = vec4(col * lum * alpha, alpha);
 }
 `;
 
 export default function AmbientBg({
-  colorStops = ["#4c1d95", "#6d28d9", "#1e1b4b"],
-  amplitude = 1.2,
-  blend = 0.55,
-  speed = 1.0,
+  palette    = ["#0f172a", "#6366f1", "#0ea5e9"],
+  waveScale  = 1.15,
+  softness   = 0.50,
+  speed      = 1.0,
 }) {
-  const propsRef = useRef({ colorStops, amplitude, blend, speed });
-  propsRef.current = { colorStops, amplitude, blend, speed };
+  const liveProps = useRef({ palette, waveScale, softness, speed });
+  liveProps.current = { palette, waveScale, softness, speed };
 
-  const ctnRef = useRef(null);
+  const mountRef = useRef(null);
 
   useEffect(() => {
-    const ctn = ctnRef.current;
-    if (!ctn) return;
+    const container = mountRef.current;
+    if (!container) return;
 
     const renderer = new Renderer({
       alpha: true,
@@ -157,60 +119,59 @@ export default function AmbientBg({
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.canvas.style.backgroundColor = "transparent";
 
-    const colorStopsArray = colorStops.map((hex) => {
+    const hexToFloats = (hex) => {
       const c = new Color(hex);
       return [c.r, c.g, c.b];
-    });
+    };
 
     const geometry = new Triangle(gl);
     if (geometry.attributes.uv) delete geometry.attributes.uv;
 
     const program = new Program(gl, {
-      vertex: VERT,
+      vertex:   VERT,
       fragment: FRAG,
       uniforms: {
-        uTime:       { value: 0 },
-        uAmplitude:  { value: amplitude },
-        uColorStops: { value: colorStopsArray },
-        uResolution: { value: [ctn.offsetWidth, ctn.offsetHeight] },
-        uBlend:      { value: blend },
+        uTime:      { value: 0 },
+        uWaveScale: { value: waveScale },
+        uPalette:   { value: palette.map(hexToFloats) },
+        uViewport:  { value: [container.offsetWidth, container.offsetHeight] },
+        uSoftness:  { value: softness },
       },
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    ctn.appendChild(gl.canvas);
+    container.appendChild(gl.canvas);
 
-    const resize = () => {
-      if (!ctn) return;
-      renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
-      program.uniforms.uResolution.value = [ctn.offsetWidth, ctn.offsetHeight];
+    const handleResize = () => {
+      if (!container) return;
+      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      program.uniforms.uViewport.value = [container.offsetWidth, container.offsetHeight];
     };
-    window.addEventListener("resize", resize);
-    resize();
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-    let rafId;
-    const update = (t) => {
-      rafId = requestAnimationFrame(update);
-      const p = propsRef.current;
-      program.uniforms.uTime.value       = t * 0.001 * (p.speed ?? 1.0);
-      program.uniforms.uAmplitude.value  = p.amplitude ?? 1.2;
-      program.uniforms.uBlend.value      = p.blend ?? 0.55;
-      program.uniforms.uColorStops.value = (p.colorStops ?? colorStops).map((hex) => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b];
-      });
+    let raf;
+    const tick = (ms) => {
+      raf = requestAnimationFrame(tick);
+      const p = liveProps.current;
+      program.uniforms.uTime.value      = ms * 0.001 * (p.speed ?? 1.0);
+      program.uniforms.uWaveScale.value = p.waveScale ?? 1.15;
+      program.uniforms.uSoftness.value  = p.softness  ?? 0.50;
+      program.uniforms.uPalette.value   = (p.palette ?? palette).map(hexToFloats);
       renderer.render({ scene: mesh });
     };
-    rafId = requestAnimationFrame(update);
+    raf = requestAnimationFrame(tick);
 
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", resize);
-      if (ctn && gl.canvas.parentNode === ctn) ctn.removeChild(gl.canvas);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", handleResize);
+      if (container && gl.canvas.parentNode === container) {
+        container.removeChild(gl.canvas);
+      }
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <div ref={ctnRef} className="ambient-bg"/>;
+  return <div ref={mountRef} className="ambient-bg" />;
 }

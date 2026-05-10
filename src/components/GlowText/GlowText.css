@@ -2,12 +2,12 @@
   display: inline-block;
   background: linear-gradient(
     90deg,
-    #1a1a2e 0%,
-    #1a1a2e 25%,
-    #7c3aed 45%,
-    #6366f1 55%,
-    #1a1a2e 75%,
-    #1a1a2e 100%
+    #0f1f1c 0%,
+    #0f1f1c 22%,
+    #0d9488 42%,
+    #22d3ee 52%,
+    #0f1f1c 72%,
+    #0f1f1c 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;

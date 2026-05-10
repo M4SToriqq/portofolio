@@ -14,8 +14,8 @@
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(139, 92, 246, 0.7) 30%,
-    rgba(99, 102, 241, 0.5) 70%,
+    rgba(13, 148, 136, 0.72) 30%,
+    rgba(34, 211, 238, 0.5) 70%,
     transparent
   );
 }
@@ -25,7 +25,7 @@
   line-height: 1.55;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: #f3f4f6;
+  color: #f0fdf4;
   margin: 0;
 }
 
@@ -43,7 +43,7 @@
   font-family: monospace;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(139, 92, 246, 0.25);
+  color: rgba(13, 148, 136, 0.28);
   pointer-events: none;
   user-select: none;
 }

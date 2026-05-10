@@ -6,52 +6,83 @@ import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphe
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 import './BadgeCard.css';
-;
-const cardGLB = "./assets/card.glb";
-const lanyard = "./assets/Lanyard.png";
+
+const MODEL_PATH = './assets/card.glb';
+const STRAP_TEX = './assets/Lanyard.png';
+const PROFILE_TEX = './assets/Toriq.png';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
-export default function Lanyard({
-  position = [0, 0, 18],
-  gravity = [0, -40, 0],
-  fov = 38,
-  transparent = true
+export default function BadgeCard({
+  camPos = [0, 0, 18],
+  pullForce = [0, -40, 0],
+  fieldOfView = 38,
+  clearBg = true,
 }) {
   return (
-    <div className="badge-wrapper">
-      <Canvas camera={{ position, fov, near: 0.1, far: 1000 }} gl={{ alpha: transparent, antialias: true, toneMapping: THREE.ACESFilmicToneMapping, outputColorSpace: THREE.SRGBColorSpace }} onCreated={({ gl }) => { gl.setClearColor(new THREE.Color(0x141a38), transparent ? 0 : 1); gl.shadowMap.enabled = true; gl.shadowMap.type = THREE.PCFSoftShadowMap;}}>
-        <hemisphereLight intensity={0.65} skyColor="#f3f4ff" groundColor="#1f2937" />
-        <ambientLight intensity={1.1}/>
-        <directionalLight position={[5, 12, 8]} intensity={3.6} color="#ffffff" castShadow/>
-        <pointLight position={[-2, 3, 8]} intensity={3.0} color="#c084fc" />
-        <pointLight position={[3, -1, 5]} intensity={2.2} color="#60a5fa" />
-        <pointLight position={[0, 8, 18]} intensity={2.4} color="#ffffff" />
-        <spotLight position={[0, 12, 6]} angle={0.32} penumbra={0.8} intensity={5.5} color="#e9d5ff" castShadow/>
-        <spotLight position={[-6, 4, 8]} angle={0.4} penumbra={0.7} intensity={3.2} color="#93c5fd" />
+    <div className="badge-shell">
+      <Canvas
+        camera={{ position: camPos, fov: fieldOfView, near: 0.1, far: 1000 }}
+        gl={{
+          alpha: clearBg,
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          outputColorSpace: THREE.SRGBColorSpace,
+        }}
+        onCreated={({ gl }) => {
+          gl.setClearColor(new THREE.Color(0x0d1117), clearBg ? 0 : 1);
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        }}
+      >
+        {/* Ambient fill */}
+        <hemisphereLight intensity={0.55} skyColor="#e0f2fe" groundColor="#1e293b" />
+        <ambientLight intensity={0.9} />
 
-        <Physics gravity={gravity} timeStep={1 / 60}>
-          <Band/>
+        {/* Key light — warm gold */}
+        <directionalLight position={[6, 14, 9]} intensity={3.2} color="#fde68a" castShadow />
+
+        {/* Accent fills */}
+        <pointLight position={[-3, 4, 7]} intensity={2.8} color="#34d399" />
+        <pointLight position={[4, -2, 6]} intensity={2.0} color="#38bdf8" />
+        <pointLight position={[0, 9, 16]} intensity={2.2} color="#f0fdf4" />
+
+        {/* Spots */}
+        <spotLight position={[0, 13, 7]} angle={0.30} penumbra={0.75} intensity={5.0} color="#d1fae5" castShadow />
+        <spotLight position={[-5, 5, 9]} angle={0.38} penumbra={0.65} intensity={3.0} color="#7dd3fc" />
+
+        <Physics gravity={pullForce} timeStep={1 / 60}>
+          <Tether />
         </Physics>
 
-        <Environment blur={0.85}>
-          <Lightformer intensity={1.5} color="#a78bfa" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]}/>
-          <Lightformer intensity={2} color="#818cf8" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]}/>
-          <Lightformer intensity={2} color="#c4b5fd" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]}/>
-          <Lightformer intensity={6} color="#7c3aed" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]}/>
-          <Lightformer intensity={4} color="#4f46e5" position={[10, 5, -5]} rotation={[0, -Math.PI / 2, 0]} scale={[50, 10, 1]}/>
+        <Environment blur={0.75}>
+          <Lightformer intensity={1.4} color="#6ee7b7" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+          <Lightformer intensity={1.8} color="#22d3ee" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+          <Lightformer intensity={1.8} color="#a7f3d0" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+          <Lightformer intensity={5.5} color="#059669" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
+          <Lightformer intensity={3.5} color="#0284c7" position={[10, 5, -5]} rotation={[0, -Math.PI / 2, 0]} scale={[50, 10, 1]} />
         </Environment>
       </Canvas>
     </div>
   );
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0 }) {
-  const band = useRef();
-  const fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
-  const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
+// ─── Physics rope + card ──────────────────────────────────────────────────────
 
-  const segmentProps = {
+function Tether({ topSpeed = 50, bottomSpeed = 0 }) {
+  const cordRef = useRef();
+  const anchor = useRef();
+  const seg0 = useRef();
+  const seg1 = useRef();
+  const seg2 = useRef();
+  const cardBody = useRef();
+
+  const tmpVec = new THREE.Vector3();
+  const tmpAng = new THREE.Vector3();
+  const tmpRot = new THREE.Vector3();
+  const tmpDir = new THREE.Vector3();
+
+  const jointConfig = {
     type: 'dynamic',
     canSleep: true,
     colliders: false,
@@ -59,16 +90,17 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
     linearDamping: 4,
   };
 
-  const { nodes } = useGLTF(cardGLB);
-  const texture = useTexture(lanyard);
-  const profileTexture = useTexture('./assets/Toriq.png');
-  profileTexture.flipY = false;
-  profileTexture.colorSpace = THREE.SRGBColorSpace;
-  profileTexture.wrapS = profileTexture.wrapT = THREE.ClampToEdgeWrapping;
-  profileTexture.repeat.set(1, 1);
-  profileTexture.offset.set(0, 0);
+  const { nodes } = useGLTF(MODEL_PATH);
+  const strapTex = useTexture(STRAP_TEX);
+  const faceTex = useTexture(PROFILE_TEX);
 
-  const [curve] = useState(() =>
+  faceTex.flipY = false;
+  faceTex.colorSpace = THREE.SRGBColorSpace;
+  faceTex.wrapS = faceTex.wrapT = THREE.ClampToEdgeWrapping;
+  faceTex.repeat.set(1, 1);
+  faceTex.offset.set(0, 0);
+
+  const [path] = useState(() =>
     new THREE.CatmullRomCurve3([
       new THREE.Vector3(),
       new THREE.Vector3(),
@@ -77,138 +109,182 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
     ])
   );
 
-  const [dragged, drag] = useState(false);
-  const [hovered, hover] = useState(false);
-  const [isSmall, setIsSmall] = useState(
+  const [grabbed, setGrabbed] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [compact, setCompact] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 1024
   );
 
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
-  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.45, 0]]);
+  // Rope joints
+  useRopeJoint(anchor, seg0, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(seg0, seg1, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(seg1, seg2, [[0, 0, 0], [0, 0, 0], 1]);
+  useSphericalJoint(seg2, cardBody, [[0, 0, 0], [0, 1.45, 0]]);
 
   useEffect(() => {
-    if (hovered) {
-      document.body.style.cursor = dragged ? 'grabbing' : 'grab';
+    if (hovering) {
+      document.body.style.cursor = grabbed ? 'grabbing' : 'grab';
       return () => void (document.body.style.cursor = 'auto');
     }
-  }, [hovered, dragged]);
+  }, [hovering, grabbed]);
 
   useEffect(() => {
-    const handleResize = () => setIsSmall(window.innerWidth < 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const onResize = () => setCompact(window.innerWidth < 1024);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   useFrame((state, delta) => {
-    if (dragged) {
-      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
-      dir.copy(vec).sub(state.camera.position).normalize();
-      vec.add(dir.multiplyScalar(state.camera.position.length()));
-      [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
-      card.current?.setNextKinematicTranslation({
-        x: vec.x - dragged.x,
-        y: vec.y - dragged.y,
-        z: vec.z - dragged.z,
+    if (grabbed) {
+      tmpVec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
+      tmpDir.copy(tmpVec).sub(state.camera.position).normalize();
+      tmpVec.add(tmpDir.multiplyScalar(state.camera.position.length()));
+      [cardBody, seg0, seg1, seg2, anchor].forEach((r) => r.current?.wakeUp());
+      cardBody.current?.setNextKinematicTranslation({
+        x: tmpVec.x - grabbed.x,
+        y: tmpVec.y - grabbed.y,
+        z: tmpVec.z - grabbed.z,
       });
     }
 
-    if (fixed.current) {
-      [j1, j2].forEach((ref) => {
-        if (!ref.current.lerped)
-          ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
-        const clampedDistance = Math.max(
-          0.1,
-          Math.min(1, ref.current.lerped.distanceTo(ref.current.translation()))
-        );
-        ref.current.lerped.lerp(
-          ref.current.translation(),
-          delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed))
+    if (anchor.current) {
+      [seg0, seg1].forEach((r) => {
+        if (!r.current.lerped)
+          r.current.lerped = new THREE.Vector3().copy(r.current.translation());
+        const dist = Math.max(0.1, Math.min(1, r.current.lerped.distanceTo(r.current.translation())));
+        r.current.lerped.lerp(
+          r.current.translation(),
+          delta * (bottomSpeed + dist * (topSpeed - bottomSpeed))
         );
       });
 
-      curve.points[0].copy(j3.current.translation());
-      curve.points[1].copy(j2.current.lerped);
-      curve.points[2].copy(j1.current.lerped);
-      curve.points[3].copy(fixed.current.translation());
-      band.current.geometry.setPoints(curve.getPoints(32));
+      path.points[0].copy(seg2.current.translation());
+      path.points[1].copy(seg1.current.lerped);
+      path.points[2].copy(seg0.current.lerped);
+      path.points[3].copy(anchor.current.translation());
+      cordRef.current.geometry.setPoints(path.getPoints(32));
 
-      ang.copy(card.current.angvel());
-      rot.copy(card.current.rotation());
-      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+      tmpAng.copy(cardBody.current.angvel());
+      tmpRot.copy(cardBody.current.rotation());
+      cardBody.current.setAngvel({ x: tmpAng.x, y: tmpAng.y - tmpRot.y * 0.25, z: tmpAng.z });
     }
   });
 
-  curve.curveType = 'chordal';
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  path.curveType = 'chordal';
+  strapTex.wrapS = strapTex.wrapT = THREE.RepeatWrapping;
 
-  const cardMaterial = useMemo(() => {
-    return new THREE.MeshPhysicalMaterial({
-      map: profileTexture,
-      color: new THREE.Color('#eef2ff'),
-      roughness: 0.1,
-      metalness: 0.95,
-      clearcoat: 1,
-      clearcoatRoughness: 0.02,
-      envMapIntensity: 3.5,
-      emissive: new THREE.Color('#c4b5fd'),
-      emissiveIntensity: 0.08,
-      sheen: 0.7,
-      sheenColor: new THREE.Color('#d8b4fe'),
-    });
-  }, [profileTexture]);
+  // Card face — teal-tinted physical material
+  const faceMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+    map: faceTex,
+    color: new THREE.Color('#ecfdf5'),
+    roughness: 0.08,
+    metalness: 0.92,
+    clearcoat: 1,
+    clearcoatRoughness: 0.02,
+    envMapIntensity: 3.2,
+    emissive: new THREE.Color('#6ee7b7'),
+    emissiveIntensity: 0.07,
+    sheen: 0.65,
+    sheenColor: new THREE.Color('#a7f3d0'),
+  }), [faceTex]);
 
-  const clipMaterial = useMemo(() => {
-    return new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color('#c4b5fd'),
-      roughness: 0.1,
-      metalness: 1,
-      clearcoat: 1,
-      envMapIntensity: 3,
-      emissive: new THREE.Color('#7c3aed'),
-      emissiveIntensity: 0.4,
-    });
-  }, []);
+  // Clip — gold metallic
+  const clipMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color('#fcd34d'),
+    roughness: 0.08,
+    metalness: 1,
+    clearcoat: 1,
+    envMapIntensity: 3.2,
+    emissive: new THREE.Color('#d97706'),
+    emissiveIntensity: 0.35,
+  }), []);
 
   return (
     <>
       <group position={[0, 4, 0]}>
-        <mesh position={[0, 0, -2]} rotation={[0, 0, 0]}>
+        {/* Ghost backdrop plane */}
+        <mesh position={[0, 0, -2]}>
           <planeGeometry args={[8, 11]} />
-          <meshStandardMaterial color="#4338ca" opacity={0.08} transparent side={THREE.DoubleSide} />
+          <meshStandardMaterial color="#0d9488" opacity={0.06} transparent side={THREE.DoubleSide} />
         </mesh>
-        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+
+        <RigidBody ref={anchor} {...jointConfig} type="fixed" />
+
+        <RigidBody position={[0.5, 0, 0]} ref={seg0} {...jointConfig}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+
+        <RigidBody position={[1, 0, 0]} ref={seg1} {...jointConfig}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+
+        <RigidBody position={[1.5, 0, 0]} ref={seg2} {...jointConfig}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
+
+        <RigidBody
+          position={[2, 0, 0]}
+          ref={cardBody}
+          {...jointConfig}
+          type={grabbed ? 'kinematicPosition' : 'dynamic'}
+        >
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
-          <group scale={4.5} position={[0, -1.1, -0.05]} onPointerOver={() => hover(true)} onPointerOut={() => hover(false)} onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))} onPointerDown={(e) => ( e.target.setPointerCapture(e.pointerId), drag( new THREE.Vector3() .copy(e.point) .sub(vec.copy(card.current.translation()))))}>
+
+          <group
+            scale={4.5}
+            position={[0, -1.1, -0.05]}
+            onPointerOver={() => setHovering(true)}
+            onPointerOut={() => setHovering(false)}
+            onPointerUp={(e) => {
+              e.target.releasePointerCapture(e.pointerId);
+              setGrabbed(false);
+            }}
+            onPointerDown={(e) => {
+              e.target.setPointerCapture(e.pointerId);
+              setGrabbed(
+                new THREE.Vector3()
+                  .copy(e.point)
+                  .sub(tmpVec.copy(cardBody.current.translation()))
+              );
+            }}
+          >
             <mesh geometry={nodes.card.geometry} castShadow receiveShadow>
-              <primitive object={cardMaterial} attach="material" />
+              <primitive object={faceMat} attach="material" />
             </mesh>
 
             <mesh geometry={nodes.clip.geometry} castShadow>
-              <primitive object={clipMaterial} attach="material" />
+              <primitive object={clipMat} attach="material" />
             </mesh>
 
             <mesh geometry={nodes.clamp.geometry} castShadow>
-              <meshPhysicalMaterial color="#a78bfa" roughness={0.05} metalness={1.0} clearcoat={1} envMapIntensity={3} emissive="#6d28d9" emissiveIntensity={0.3}/>
+              <meshPhysicalMaterial
+                color="#34d399"
+                roughness={0.04}
+                metalness={1.0}
+                clearcoat={1}
+                envMapIntensity={3.2}
+                emissive="#065f46"
+                emissiveIntensity={0.28}
+              />
             </mesh>
           </group>
         </RigidBody>
       </group>
 
-      <mesh ref={band}>
+      {/* Cord mesh */}
+      <mesh ref={cordRef}>
         <meshLineGeometry />
-        <meshLineMaterial color="#7c3aed" depthTest={false} resolution={isSmall ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-3, 1]} lineWidth={1.2} opacity={0.95} transparent/>
+        <meshLineMaterial
+          color="#0d9488"
+          depthTest={false}
+          resolution={compact ? [1000, 2000] : [1000, 1000]}
+          useMap
+          map={strapTex}
+          repeat={[-3, 1]}
+          lineWidth={1.2}
+          opacity={0.92}
+          transparent
+        />
       </mesh>
     </>
   );

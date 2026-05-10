@@ -26,16 +26,15 @@ const ContactSection = () => (
             onMouseEnter={(e) => { e.currentTarget.style.color = '#7c3aed'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280'; }}
           >
-            <span>toriqqhabilf12@gmail.com</span>
+            <span>toriqqhabilfadhila21@gmail.com</span>
             <svg className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
             </svg>
           </a>
           <div className="flex items-center gap-3 mt-1">
             {[
-              { label: "GitHub", href: "https://github.com/ToriqHabilFadhila" },
-              { label: "LinkedIn", href: "#" },
-              { label: "Instagram", href: "https://www.instagram.com/rixxieysc_/" },
+              { label: "GitHub", href: "https://github.com/M4SToriqq" },
+              { label: "Instagram", href: "https://www.instagram.com/jstxriqqz66/" },
             ].map(({ label, href }) => (
               <a key={label} href={href} className="text-xs tracking-wide transition-colors duration-200" style={{ color: '#9ca3af' }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = '#7c3aed'; }}
