@@ -1,0 +1,53 @@
+.livetype {
+    display: inline;
+    background: linear-gradient(90deg,
+            #1a1a2e 0%,
+            #1a1a2e 20%,
+            #7c3aed 40%,
+            #6366f1 50%,
+            #1a1a2e 70%,
+            #1a1a2e 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: livetypeShine var(--shine-speed, 3s) linear infinite;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@keyframes livetypeShine {
+    0% {
+        background-position: 200% center;
+    }
+    100% {
+        background-position: -200% center;
+    }
+}
+
+.lt-cursor {
+    display: inline-block;
+    margin-left: 2px;
+    font-weight: 100;
+    -webkit-text-fill-color: #7c3aed;
+    color: #7c3aed;
+    user-select: none;
+}
+
+.lt-cursor--solid {
+    opacity: 1;
+}
+
+.lt-cursor--blink {
+    animation: ltCursorBlink 0.9s step-end infinite;
+}
+
+@keyframes ltCursorBlink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}

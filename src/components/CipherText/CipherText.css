@@ -1,0 +1,54 @@
+.ct-block {
+  position: relative;
+  max-width: 780px;
+  padding: 0;
+}
+
+.ct-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-family: monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(139, 92, 246, 0.5);
+  margin-bottom: 14px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ct-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.6);
+  animation: ctDotPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ctDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.7); }
+}
+
+.ct-text {
+  font-family: monospace;
+  font-size: clamp(15px, 3.5vw, 28px);
+  line-height: 1.65;
+  color: #d4d4d8;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.ct-char {
+  display: inline-block;
+  will-change: transform, opacity, filter, color;
+  transform-origin: 50% 60%;
+  transition: color 0.3s ease;
+  cursor: default;
+}
+
+.ct-word {
+  display: inline-block;
+  margin-right: 0.28em;
+}
