@@ -52,9 +52,11 @@ const Navbar = ({ hidden = false }) => {
       }}
     >
       <a href="#home" className="flex items-center gap-2 group">
-        <div className="w-16 h-16 flex items-center justify-center">
-          <img src={Logo} alt="TH.dev Logo" className="w-16 h-16 object-contain" style={{ filter: "invert(0.15) sepia(1) saturate(3) hue-rotate(160deg)" }} />
-        </div>
+        <img
+          src={Logo}
+          alt="TH.dev Logo"
+          className="h-12 w-auto"
+        />
       </a>
 
       <ul className="hidden md:flex items-center gap-1">

@@ -18,7 +18,11 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-10 mb-10">
 
           <div className="flex flex-col items-center md:items-start gap-3">
-            <img src={Logo} alt="TH.dev Logo" className="w-16 h-16 object-contain" style={{ filter: "invert(0.15) sepia(1) saturate(3) hue-rotate(160deg)" }} />
+            <img
+              src={Logo}
+              alt="TH.dev Logo"
+              className="h-12 w-auto object-contain"
+            />
             <p style={{ fontSize: "12px", color: "#9ca3af", maxWidth: "180px", lineHeight: 1.6 }}>
               Full-stack developer building modern digital experiences.
             </p>
