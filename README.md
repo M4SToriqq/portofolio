@@ -1,61 +1,107 @@
-# Portofolio Web — [Faris Edrik P / rissss21]
+# Toriqq Portfolio Website
 
-Selamat datang di portofolio web pribadi saya! 🌐  
-Dibuat dengan React + Vite, ini adalah showcase dari project, skill, dan karya yang ingin saya bagikan.
+A modern and responsive personal portfolio website built to showcase my projects, technical skills, and development journey as a Software Engineer.
 
-##  Struktur Project
-
-- `public/` — file statis (favicon, assets, dsb.)  
-- `src/` — code utama React (komponen, utilitas, dsb.)  
-- `index.html` — entry point halaman web  
-- `package.json` & `package-lock.json` — manajemen dependencies dan script  
-- `vite.config.js` — konfigurasi build dan dev server Vite  
-- `eslint.config.js` — aturan linting agar kodenya tetap bersih dan konsisten  
-
-##  Fitur Utama
-
-- Dibangun dengan **React + Vite** — ringan, cepat reload, dan performa build optimal  
-- **ESLint** telah terkonfigurasi agar coding style tetap rapi  
-- Struktur modular dan siap dikembangkan—bisa ditambahkan halaman “About”, “Projects”, dsb.
-
-##  Cara Jalankan
-
-1. Clone repository ini:
-```bash
-git clone https://github.com/rissss21/portofolio.git
-cd portofolio
-````
-
-2. Install dependencies:
-```bash
-npm install
-````
-
-3. Jalankan server lokal dengan hot reload:
-```bash
-npm run dev
-````
-
-4. Buat versi production:
-```bash
-npm run build
-````
-
-## &#x20;Quick Preview
-
-Jika sudah di-deploy (contoh: GitHub Pages, Netlify, Vercel), kamu bisa tambahkan link deploy di sini, misalnya:
-[🔗 Lihat versi live](https://username.github.io/portofolio/)
-
-## Tentang Saya
-
-Hai, saya Faris Edrik P (username GitHub: `rissss21`).
-Saya seorang Developer yang suka bikin aplikasi web ringan dengan tampilan modern dan performa tinggi. Scroll aja di project saya, dan jangan sungkan untuk reach out kalau ada pertanyaan!
-
-* **Email:** [email\_farisedrik21@gmail.com](mailto:email_farisedrik21@gmail.com)
-* **LinkedIn:** [linkedin.com/in/farisedp](https://www.linkedin.com/in/farisedp/)
-* **Instagram:** @farisedrikprayoga
+Developed using React and Vite with a focus on clean UI design, performance, scalability, and maintainable code architecture.
 
 ---
 
+## Tech Stack
 
-[1]: https://github.com/rissss21/portofolio "GitHub - rissss21/portofolio"
+- React.js
+- Vite
+- JavaScript
+- CSS / Tailwind CSS
+- ESLint
+
+---
+
+## Features
+
+- Modern and responsive user interface
+- Interactive project showcase section
+- Smooth user experience across devices
+- Fast development and optimized production build with Vite
+- Clean and scalable folder structure
+- Easy to customize and extend
+
+---
+
+## Project Structure
+
+```bash
+src/
+ ├── assets/
+ ├── components/
+ ├── pages/
+ ├── data/
+ ├── utils/
+ └── main.jsx
+```
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/M4SToriqq/portfolio.git
+```
+
+Move into the project directory:
+
+```bash
+cd portfolio
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run development server:
+
+```bash
+npm run dev
+```
+
+Build production files:
+
+```bash
+npm run build
+```
+
+---
+
+## Live Demo
+
+```txt
+https://m4storiqq.github.io/Portofolio/
+```
+
+---
+
+## About Me
+
+Hello, I'm **Toriq Habil Fadhila** — a Software Engineer who enjoys building modern web applications with clean architecture and scalable systems.
+
+I am passionate about:
+
+- Frontend Development
+- Backend Development
+- UI/UX Design
+- Full-Stack Web Development
+- Performance Optimization
+
+---
+
+## Contact
+
+- GitHub: https://github.com/M4SToriqq
+- Email: toriqqhabilfadhila21@gmail.com
+- Instagram: @toriqq
+
+---
+© 2026 Toriq Habil Fadhila
