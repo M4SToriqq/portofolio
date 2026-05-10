@@ -101,7 +101,6 @@ I am passionate about:
 
 - GitHub: https://github.com/M4SToriqq
 - Email: toriqqhabilfadhila21@gmail.com
-- Instagram: @toriqq
 
 ---
 © 2026 Toriq Habil Fadhila
