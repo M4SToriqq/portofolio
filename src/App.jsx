@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload";
     if (isReload) {
-      window.location.replace(window.location.origin + "/portofolio/");
+      window.location.replace(window.location.origin + "/Portofolio/");
     }
   }, []);
 
