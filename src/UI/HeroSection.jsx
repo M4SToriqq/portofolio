@@ -8,9 +8,9 @@ const HeroSection = () => (
     <div style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s forwards', opacity: 0 }}>
       <div
         className="flex items-center gap-3 mb-8 w-fit p-3 px-4 rounded-2xl"
-        style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)', animation: 'heroFadeUp 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s forwards', opacity: 0 }}
+        style={{ background: 'rgba(13,148,136,0.08)', border: '1px solid rgba(13,148,136,0.2)', animation: 'heroFadeUp 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s forwards', opacity: 0 }}
       >
-        <q className="text-sm text-violet-700 font-medium">From logic to reality.</q>
+        <q className="text-sm font-medium" style={{ color: '#0d9488' }}>From logic to reality.</q>
       </div>
 
       <div className="text-5xl font-bold mb-6 leading-tight">
@@ -28,18 +28,18 @@ const HeroSection = () => (
             href="./assets/CV.pdf"
             download="Toriq_Habil_Fadhila_CV.pdf"
             className="font-semibold p-3.5 px-7 rounded-full transition-all duration-300"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #6366f1)', color: '#fff', boxShadow: '0 4px 20px rgba(124,58,237,0.35)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(124,58,237,0.5)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,0.35)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            style={{ background: 'linear-gradient(135deg, #0d9488, #22d3ee)', color: '#fff', boxShadow: '0 4px 20px rgba(13,148,136,0.35)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(13,148,136,0.5)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,148,136,0.35)'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
             Download CV
           </a>
           <a
             href="#project"
             className="font-semibold p-3.5 px-7 rounded-full transition-all duration-300"
-            style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)', color: '#7c3aed' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(139,92,246,0.15)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            style={{ background: 'rgba(13,148,136,0.08)', border: '1px solid rgba(13,148,136,0.25)', color: '#0d9488' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(13,148,136,0.15)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(13,148,136,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
             <ShimmerText text="Explore My Projects" disabled={false} speed={3} />
           </a>

@@ -8,9 +8,9 @@ const ContactSection = () => (
         <p className="text-xs font-mono tracking-[0.2em] uppercase mb-3" style={{ color: '#9ca3af' }}>
           — 04 / Contact
         </p>
-        <h2 className="text-6xl lg:text-7xl font-black tracking-tighter leading-none" style={{ color: '#1a1a2e' }}>
+        <h2 className="text-6xl lg:text-7xl font-black tracking-tighter leading-none" style={{ color: '#0c1f1c' }}>
           Let's<br />
-          <span style={{ background: 'linear-gradient(135deg, #7c3aed, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+          <span style={{ background: 'linear-gradient(135deg, #0d9488, #22d3ee)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
             Work
           </span><br />
           Together.
@@ -23,7 +23,7 @@ const ContactSection = () => (
         </p>
         <div className="flex flex-col gap-2 lg:items-end">
           <a href="mailto:toriqqhabilf12@gmail.com" className="group inline-flex items-center gap-2 text-sm transition-colors duration-200" style={{ color: '#6b7280' }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#7c3aed'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#0d9488'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280'; }}
           >
             <span>toriqqhabilfadhila21@gmail.com</span>
@@ -37,7 +37,7 @@ const ContactSection = () => (
               { label: "Instagram", href: "https://www.instagram.com/jstxriqqz66/" },
             ].map(({ label, href }) => (
               <a key={label} href={href} className="text-xs tracking-wide transition-colors duration-200" style={{ color: '#9ca3af' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#7c3aed'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#0d9488'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = '#9ca3af'; }}
               >
                 {label}
@@ -52,17 +52,17 @@ const ContactSection = () => (
       </div>
     </div>
 
-    <div className="h-px w-full mb-16" style={{ background: 'linear-gradient(to right, rgba(139,92,246,0.3), rgba(99,102,241,0.15), transparent)' }} data-aos="fade-right" data-aos-duration="1000" data-aos-once="true" />
+    <div className="h-px w-full mb-16" style={{ background: 'linear-gradient(to right, rgba(13,148,136,0.3), rgba(34,211,238,0.15), transparent)' }} data-aos="fade-right" data-aos-duration="1000" data-aos-once="true" />
 
     <div className="flex flex-col md:flex-row gap-6 items-stretch">
       {/* Live Chat */}
       <div
         className="flex-1 relative rounded-3xl overflow-hidden"
-        style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(20px)', boxShadow: '0 8px 40px rgba(139,92,246,0.08)' }}
+        style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(13,148,136,0.15)', backdropFilter: 'blur(20px)', boxShadow: '0 8px 40px rgba(13,148,136,0.08)' }}
         data-aos="fade-up" data-aos-duration="800" data-aos-delay="100" data-aos-once="true"
       >
-        <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, rgba(139,92,246,0.4), transparent)' }} />
-        <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: '1px solid rgba(139,92,246,0.08)' }}>
+        <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, rgba(13,148,136,0.4), transparent)' }} />
+        <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: '1px solid rgba(13,148,136,0.08)' }}>
           <div className="flex gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#fca5a5' }} />
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#fde68a' }} />
@@ -82,11 +82,11 @@ const ContactSection = () => (
       {/* Contact Form */}
       <div
         className="flex-1 relative rounded-3xl overflow-hidden"
-        style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(99,102,241,0.15)', backdropFilter: 'blur(20px)', boxShadow: '0 8px 40px rgba(99,102,241,0.08)' }}
+        style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(34,211,238,0.15)', backdropFilter: 'blur(20px)', boxShadow: '0 8px 40px rgba(34,211,238,0.08)' }}
         data-aos="fade-up" data-aos-duration="800" data-aos-delay="200" data-aos-once="true"
       >
-        <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, rgba(99,102,241,0.4), transparent)' }} />
-        <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: '1px solid rgba(99,102,241,0.08)' }}>
+        <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, rgba(34,211,238,0.4), transparent)' }} />
+        <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: '1px solid rgba(34,211,238,0.08)' }}>
           <div className="flex gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#fca5a5' }} />
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#fde68a' }} />
@@ -107,9 +107,9 @@ const ContactSection = () => (
                 <input
                   type={type} name={name} placeholder={placeholder} required
                   className="w-full rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200 outline-none"
-                  style={{ background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.15)', color: '#1a1a2e' }}
-                  onFocus={(e) => { e.target.style.border = '1px solid rgba(139,92,246,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }}
-                  onBlur={(e) => { e.target.style.border = '1px solid rgba(139,92,246,0.15)'; e.target.style.boxShadow = 'none'; }}
+                  style={{ background: 'rgba(13,148,136,0.04)', border: '1px solid rgba(13,148,136,0.15)', color: '#0c1f1c' }}
+                  onFocus={(e) => { e.target.style.border = '1px solid rgba(13,148,136,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(13,148,136,0.1)'; }}
+                  onBlur={(e) => { e.target.style.border = '1px solid rgba(13,148,136,0.15)'; e.target.style.boxShadow = 'none'; }}
                 />
               </div>
             ))}
@@ -120,18 +120,18 @@ const ContactSection = () => (
             <textarea
               name="message" id="message" rows={7} placeholder="Write your message here..." required
               className="w-full rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200 outline-none resize-none"
-              style={{ background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.15)', color: '#1a1a2e' }}
-              onFocus={(e) => { e.target.style.border = '1px solid rgba(139,92,246,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }}
-              onBlur={(e) => { e.target.style.border = '1px solid rgba(139,92,246,0.15)'; e.target.style.boxShadow = 'none'; }}
+              style={{ background: 'rgba(13,148,136,0.04)', border: '1px solid rgba(13,148,136,0.15)', color: '#0c1f1c' }}
+              onFocus={(e) => { e.target.style.border = '1px solid rgba(13,148,136,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(13,148,136,0.1)'; }}
+              onBlur={(e) => { e.target.style.border = '1px solid rgba(13,148,136,0.15)'; e.target.style.boxShadow = 'none'; }}
             />
           </div>
 
           <button
             type="submit"
             className="group relative w-full mt-1 py-3 rounded-xl overflow-hidden transition-all duration-300 font-semibold"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #6366f1)', color: '#fff', boxShadow: '0 4px 20px rgba(124,58,237,0.3)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(124,58,237,0.45)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            style={{ background: 'linear-gradient(135deg, #0d9488, #22d3ee)', color: '#fff', boxShadow: '0 4px 20px rgba(13,148,136,0.3)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(13,148,136,0.45)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,148,136,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
             <span className="flex items-center justify-center gap-2">
               <GlowText text="Send Message" disabled={false} speed={3} className="text-sm font-semibold tracking-wide" />
