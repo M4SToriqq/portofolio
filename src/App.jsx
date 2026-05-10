@@ -15,15 +15,6 @@ function App() {
     AOS.init({ once: true, duration: 600 });
   }, []);
 
-  useEffect(() => {
-    const isReload =
-      performance.getEntriesByType("navigation")[0]?.type === "reload";
-
-    if (isReload) {
-      window.location.replace(window.location.origin + "/portofolio/");
-    }
-  }, []);
-
   return (
     <>
       <Navbar />
