@@ -6,12 +6,21 @@
   }
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   body {
     font-family: "Poppins", sans-serif;
     background-color: #f8f7ff;
     color: #1a1a2e;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
   }
   * {
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
